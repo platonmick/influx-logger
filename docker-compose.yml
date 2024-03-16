@@ -12,17 +12,21 @@ services:
     command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influx:8086
 
   influx:
-    image: influxdb
+    image: influxdb:1.8
     restart: unless-stopped
     environment:
      - INFLUXDB_DB=cadvisor 
     volumes:
-     - ./data/influx:/var/lib/influxdb
+     - influxdb-storage:/var/lib/influxdb
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:9.0.4
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
-     - ./data/grafana:/var/lib/grafana
+     - grafana-storage:/var/lib/grafana
+
+volumes:
+  influxdb-storage:
+  grafana-storage:
