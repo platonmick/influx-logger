@@ -3,16 +3,23 @@ version: "3.6"
 services:
 
   cadvisor:
-    image: google/cadvisor:latest
+    image: braingamer/cadvisor-arm:latest
+    container_name: monitoring_cadvisor
     restart: unless-stopped
     volumes:
+      - /:/rootfs:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /var/run:/var/run:ro
+    devices:
+      - /dev/kmsg
+    expose:
+      - 8080
     command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influx:8086
 
   influx:
     image: influxdb:1.8
+    container_name: monitoring_influx
     restart: unless-stopped
     environment:
      - INFLUXDB_DB=cadvisor 
@@ -21,6 +28,7 @@ services:
 
   grafana:
     image: grafana/grafana:9.0.4
+    container_name: monitoring_grafana
     restart: unless-stopped
     ports:
       - 3001:3000
